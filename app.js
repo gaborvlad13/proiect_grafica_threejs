@@ -69,7 +69,7 @@ class BasicCharacterControllerInput {
 
 
 
-class BasicCharacterController {
+class BasicGuardController {
   constructor(params){
     this._Init(params);
   }
@@ -80,7 +80,7 @@ class BasicCharacterController {
     this._velocity=new THREE.Vector3(0,0,0);
     this._animations={};
     this._input=new BasicCharacterControllerInput();
-    this._fsm=new CharacterFSM(new BasicCharacterControllerProxy(this._animations));
+    this._fsm=new GuardFSM(new BasicCharacterControllerProxy(this._animations));
     this._LoadAnimatedModel();
    }
   _LoadAnimatedModel(){
@@ -204,7 +204,7 @@ class FiniteStateMachine {
 };
 
 
-class CharacterFSM extends FiniteStateMachine {
+class GuardFSM extends FiniteStateMachine {
      constructor(proxy){
      super();
      this._proxy=proxy;
@@ -216,7 +216,6 @@ class CharacterFSM extends FiniteStateMachine {
      	this._AddState('walk',WalkState);
      }
 };
-
 
 
 class State{
@@ -473,7 +472,7 @@ class BasicWorldDemo {
        camera:this._camera,
        scene:this._scene,
      }
-     this._controls=new BasicCharacterController(params);
+     this._guard=new BasicGuardController(params);
   }
   _OnWindowResize() {
     this._camera.aspect = window.innerWidth / window.innerHeight;
@@ -497,8 +496,8 @@ class BasicWorldDemo {
     if(this._mixers){
       this._mixers.map(m=>m.update(timeElapsedS));
   }
-   if(this._controls){
-   this._controls.Update(timeElapsedS);
+   if(this._guard){
+   this._guard.Update(timeElapsedS);
    }
 }
 }
