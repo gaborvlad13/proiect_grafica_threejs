@@ -611,6 +611,7 @@ class BasicWorldDemo {
     this._scene.add(light);
 
     const controls = new OrbitControls(this._camera, this._threejs.domElement);
+    controls.enableKeys = false;
     controls.target.set(0, 10, 0);
     controls.update();
 
