@@ -312,6 +312,57 @@ class BasicGuardController {
   }
 };
 
+class BasicGirlController {
+  constructor(params){
+    this._Init(params);
+  }
+  _Init(params){
+    this._params=params;
+    this._decceleration= new THREE.Vector3(-0.0005,-0.0001,-5.0);
+    this._acceleration=new THREE.Vector3(1,0.25,100.0);
+    this._velocity=new THREE.Vector3(0,0,0);
+    this._animations={};
+    this._input=new BasicCharacterControllerInput();
+    this._fsm=new GirlFSM(new BasicCharacterControllerProxy(this._animations));
+    this._LoadAnimatedModel();
+   }
+  _LoadAnimatedModel(){
+    const loader=new FBXLoader();
+    loader.setPath('./resources/');
+    loader.load(this._params.name, (fbx) => {
+    	fbx.scale.setScalar(0.1);
+    	fbx.traverse(c=>{
+    	   c.castShadow=true;
+    	   });
+      this._target=fbx;
+      fbx.position.x = -20;
+    	this._params.scene.add(this._target);
+    	this._mixer=new THREE.AnimationMixer(this._target);
+    	this._manager=new THREE.LoadingManager();
+    	this._manager.onLoad=()=>{
+    	   this._fsm.SetState('dance');
+    	};
+    	const _OnLoad=(animName,anim)=>{
+    	   anim.timeScale=1/5;
+           const clip=anim.animations[0];
+           const action=this._mixer.clipAction(clip);
+           this._animations[animName]={
+           clip:clip,
+           action:action,
+           };
+        };
+        const loader=new FBXLoader(this._manager);
+        loader.setPath('./resources/');
+          loader.load('dance.fbx',(a) => {_OnLoad('dance',a);});
+    });
+  }
+  Update(timeInSeconds){
+  if(this._mixer){
+    this._mixer.update(timeInSeconds);
+  }
+}
+};
+
 
 
 class FiniteStateMachine {
@@ -367,7 +418,17 @@ class MouseFSM extends FiniteStateMachine {
   }
 };
 
-
+class GirlFSM extends FiniteStateMachine {
+  constructor(proxy){
+  super();
+  this._proxy=proxy;
+  this._Init();
+  }
+  _Init(){
+    this._AddState('dance',DanceState);
+    
+  }
+};
 
 class State{
   constructor(parent){
@@ -440,6 +501,22 @@ class MouseWalkState extends State{
       this._parent.SetState('Jump');
     }
   }
+}
+
+class DanceState extends State {
+  constructor(parent){
+    super(parent);
+    }
+    get Name(){
+       return 'dance';
+    }
+    Enter(prevState){
+      const currentAction = this._parent._proxy._animations['dance'].action;
+      currentAction.time = 0.0;
+      currentAction.setEffectiveTimeScale(1.0);
+      currentAction.setEffectiveWeight(1.0);
+      currentAction.play();
+    }
 }
 
 class SprintState extends State{
@@ -607,7 +684,7 @@ class BasicWorldDemo {
     light.shadow.camera.bottom = -100;
     this._scene.add(light);
 
-    light = new THREE.AmbientLight(0x101010);
+    light = new THREE.AmbientLight(0xc8c0b7);
     this._scene.add(light);
 
     const controls = new OrbitControls(this._camera, this._threejs.domElement);
@@ -629,7 +706,7 @@ class BasicWorldDemo {
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(100, 100, 10, 100),
       new THREE.MeshStandardMaterial({
-        color: 0xffffff,
+        color: 0x6f8e39,
       })
     );
     plane.castShadow = false;
@@ -681,6 +758,7 @@ class BasicWorldDemo {
 
     this._LoadAnimatedModel();
     this._LoadMouse();
+    this._LoadAnimatedModelAndDance();
     this._RAF();
   }
   _LoadAnimatedModel(){
@@ -698,6 +776,19 @@ class BasicWorldDemo {
     }
     this._mouse=new MouseController(params);
   }
+
+  _LoadAnimatedModelAndDance(){
+    const params={
+      camera:this._camera,
+      scene:this._scene,
+      name:'girl.fbx',
+      animation:1,
+      animationName:['dance'],
+      animationFile:['dance.fbx']
+    }
+    this._girl=new BasicGirlController(params);
+ }
+
   _OnWindowResize() {
     this._camera.aspect = window.innerWidth / window.innerHeight;
     this._camera.updateProjectionMatrix();
@@ -725,6 +816,10 @@ class BasicWorldDemo {
 
    if (this._mouse){
      this._mouse.Update(timeElapsedS);
+   }
+
+   if(this._girl) {
+     this._girl.Update(timeElapsedS);
    }
 }
 }
