@@ -223,8 +223,8 @@ class BasicGuardController {
    }
   _LoadAnimatedModel(){
     const loader=new FBXLoader();
-    loader.setPath('./resources/');
-    loader.load('alex.fbx', (fbx) => {
+    loader.setPath('./resources/alex/');
+    loader.load(this._params.name, (fbx) => {
     	fbx.scale.setScalar(0.1);
     	fbx.traverse(c=>{
     	   c.castShadow=true;
@@ -246,7 +246,7 @@ class BasicGuardController {
            };
         };
         const loader=new FBXLoader(this._manager);
-        loader.setPath('./resources/');
+        loader.setPath('./resources/alex/');
         loader.load('Running.fbx',(a)=>{_OnLoad('sprint',a);});
         loader.load('Walking.fbx',(a)=>{_OnLoad('walk',a);});
         loader.load('Idle.fbx',(a)=>{_OnLoad('idle',a);});
@@ -328,7 +328,7 @@ class BasicGirlController {
    }
   _LoadAnimatedModel(){
     const loader=new FBXLoader();
-    loader.setPath('./resources/');
+    loader.setPath('./resources/girl/');
     loader.load(this._params.name, (fbx) => {
     	fbx.scale.setScalar(0.1);
     	fbx.traverse(c=>{
@@ -352,7 +352,7 @@ class BasicGirlController {
            };
         };
         const loader=new FBXLoader(this._manager);
-        loader.setPath('./resources/');
+        loader.setPath('./resources/girl/');
           loader.load('dance.fbx',(a) => {_OnLoad('dance',a);});
     });
   }
@@ -496,7 +496,7 @@ class MouseWalkState extends State{
      }
   }
   Exit(){}
-  Update(timeElapsed,input){
+  Update(_,input){
     if (input._keys.spacebar){
       this._parent.SetState('Jump');
     }
@@ -548,7 +548,7 @@ class SprintState extends State{
        }
     }
     Exit(){}
-    Update(timeElapsed,input){
+    Update(_,input){
     	if(input._keys.forward||input._keys.backward){
     	  if(!input._keys.shift){
     	   this._parent.SetState('walk');
@@ -589,7 +589,7 @@ class WalkState extends State{
        }
     }
     Exit(){}
-    Update(timeElapsed,input){
+    Update(_,input){
     	if(input._keys.forward||input._keys.backward){
     	  if(input._keys.shift){
     	   this._parent.SetState('sprint');
@@ -714,35 +714,35 @@ class BasicWorldDemo {
     plane.rotation.x = -Math.PI / 2;
     this._scene.add(plane);
 
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(2, 2, 2),
-      new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-      })
-    );
-    box.position.set(0, 1, 0);
-    box.castShadow = true;
-    box.receiveShadow = true;
-    //this._scene.add(box);
+    // const box = new THREE.Mesh(
+    //   new THREE.BoxGeometry(2, 2, 2),
+    //   new THREE.MeshStandardMaterial({
+    //     color: 0xffffff,
+    //   })
+    // );
+    // box.position.set(0, 1, 0);
+    // box.castShadow = true;
+    // box.receiveShadow = true;
+    // this._scene.add(box);
 
-    for (let x = -8; x < 8; x++) {
-      for (let y = -8; y < 8; y++) {
-        const box = new THREE.Mesh(
-          new THREE.BoxGeometry(2, 2, 2),
-          new THREE.MeshStandardMaterial({
-            color: 0x808080,
-          })
-        );
-        box.position.set(
-          Math.random() + x * 5,
-          Math.random() * 4.0 + 2.0,
-          Math.random() + y * 5
-        );
-        box.castShadow = true;
-        box.receiveShadow = true;
-        //this._scene.add(box);
-      }
-    }
+    // for (let x = -8; x < 8; x++) {
+    //   for (let y = -8; y < 8; y++) {
+    //     const box = new THREE.Mesh(
+    //       new THREE.BoxGeometry(2, 2, 2),
+    //       new THREE.MeshStandardMaterial({
+    //         color: 0x808080,
+    //       })
+    //     );
+    //     box.position.set(
+    //       Math.random() + x * 5,
+    //       Math.random() * 4.0 + 2.0,
+    //       Math.random() + y * 5
+    //     );
+    //     box.castShadow = true;
+    //     box.receiveShadow = true;
+    //     //this._scene.add(box);
+    //   }
+    // }
 
     // const box = new THREE.Mesh(
     //   new THREE.SphereGeometry(2, 32, 32),
@@ -765,6 +765,7 @@ class BasicWorldDemo {
      const params={
        camera:this._camera,
        scene:this._scene,
+       name:'alex.fbx',
      }
      this._guard=new BasicGuardController(params);
     }
@@ -772,7 +773,7 @@ class BasicWorldDemo {
     const params={
       camera:this._camera,
       scene:this._scene,
-      name:'Ch14_nonPBR.fbx'
+      name:'mouse.fbx'
     }
     this._mouse=new MouseController(params);
   }
