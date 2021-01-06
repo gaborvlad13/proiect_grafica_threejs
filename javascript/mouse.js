@@ -4,6 +4,7 @@ import { BasicCharacterControllerProxy } from './character_controller.js';
 import { FiniteStateMachine } from './states.js';
 import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/loaders/FBXLoader.js';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+import * as CONSTANTS from 'https://cdn.jsdelivr.net/npm/three@0.118.3/src/constants.js';
 
 class MouseController {
   constructor(params) {
